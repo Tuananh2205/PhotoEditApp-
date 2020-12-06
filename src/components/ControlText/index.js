@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './index.css';
 function ControlText(props) {
-	const { text, setText, drawText } = props;
+	const { fonts, text, setText, drawText } = props;
 
 	useEffect(() => {
 		fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyDmsHMz7ufFxXwkgn8HDmUpWcpPEZpgwBI`)
@@ -18,6 +18,16 @@ function ControlText(props) {
 			);
 	}, []);
 	//
+
+	const changeFont = (e) => {
+		console.log(e.currentTarget.value);
+		setText((prevState) => {
+			return {
+				...prevState,
+				fonts: [e.currentTarget.value],
+			};
+		});
+	};
 
 	const changeStyle = (e) => {
 		console.log(e.currentTarget.id);
@@ -124,14 +134,13 @@ function ControlText(props) {
 						</div>
 					</div>
 					<div className="col">
-						{text.fonts.map((font, index) => (
-							<select className="form-control" key={index} id="fontName" name="fontName">
-								{/* { const el = font[index]} */}
-								<option key={font[index].family} value={font[index].family}>
+						<select className="form-control" id="fontName" name="fontName" onSelect={changeFont}>
+							{fonts.map((font, index) => (
+								<option key={font.family} value={font[index].family}>
 									{font[index].family}
 								</option>
-							</select>
-						))}
+							))}
+						</select>
 					</div>
 					<div className="col">
 						<input

@@ -54,7 +54,7 @@ function UseCanvasImage(props) {
 		console.log(typeof text.weight);
 		console.log(typeof text.size);
 		console.log(typeof text.font);
-		ctx.font = `${text.weight} ${text.size} Broadway`;
+		ctx.font = `${text.weight} ${text.size} ${text.fonts}`;
 		console.log(ctx.font);
 		// ctx.font = "italic 100px 'ABeeZee'";
 		ctx.fillText(text.content, text.x, text.y);
@@ -165,7 +165,7 @@ function UseCanvasImage(props) {
 			<hr />
 			<CropImage canvas={canvas} image={image} setCrop={setCrop} drawImage={drawImage} />
 			<hr />
-			<ControlText text={text} setText={setText} drawText={drawText} />
+			<ControlText text={text} setText={setText} fonts={text.fonts} drawText={drawText} />
 		</div>
 	);
 }
