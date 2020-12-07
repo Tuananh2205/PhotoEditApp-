@@ -28,10 +28,14 @@ function ControlText(props) {
 	const changeFont = (e) => {
 		console.log(e.target.options[e.target.selectedIndex].getAttribute('url'));
 		console.log(e.target.id);
+		const url = e.target.options[e.target.selectedIndex].getAttribute('url');
+		const regex = /http/gi;
+		const sUrl = url.replace(regex, 'https');
+		console.log(sUrl);
 		setText((prevState) => {
 			return {
 				...prevState,
-				[e.target.id]: e.target.options[e.target.selectedIndex].getAttribute('url'),
+				[e.target.id]: sUrl,
 			};
 		});
 	};
