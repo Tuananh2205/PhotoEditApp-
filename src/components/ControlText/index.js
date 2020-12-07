@@ -1,36 +1,45 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+// import FontOption from "./fontOption";
+
 import './index.css';
 function ControlText(props) {
-	const { fonts, text, setText, drawText } = props;
-
-	useEffect(() => {
+	const { text, setText, ctx } = props;
+	const [fonts, setFonts] = useState([]);
+	const getData = () =>
 		fetch(`https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyDmsHMz7ufFxXwkgn8HDmUpWcpPEZpgwBI`)
 			.then((response) => response.json())
-			.then(
-				(data) =>
-					setText((prevState) => {
-						return {
-							...prevState,
-							fonts: [data.items],
-						};
-					})
-				// console.log(data)
-			);
-	}, []);
-	//
 
+			.catch((error) => {
+				console.log(error);
+			});
+	useEffect(() => {
+		getData().then((response) => setFonts(response.items));
+	}, []);
+
+	// const changeFont = (e) => {
+	// 	console.log(e.currentTarget.value);
+	// 	setText((prevState) => {
+	// 		return {
+	// 			...prevState,
+	// 			fonts: [e.currentTarget.value],
+	// 		};
+	// 	});
+	// };
 	const changeFont = (e) => {
-		console.log(e.currentTarget.value);
+		console.log(e.target.options[e.target.selectedIndex].getAttribute('url'));
+		console.log(e.target.id);
 		setText((prevState) => {
 			return {
 				...prevState,
-				fonts: [e.currentTarget.value],
+				[e.target.id]: e.target.options[e.target.selectedIndex].getAttribute('url'),
 			};
 		});
 	};
 
 	const changeStyle = (e) => {
-		console.log(e.currentTarget.id);
+		// console.log(e.target.options[e.target.selectedIndex].getAttribute("url"));
+		console.log(e.target.id);
+
 		const id = e.currentTarget.id;
 		switch (id) {
 			case 'bold':
@@ -49,6 +58,16 @@ function ControlText(props) {
 					};
 				});
 				break;
+			// case "fontName":
+			//   setText((prevState) => {
+			//     return {
+			//       ...prevState,
+			//       [e.target.id]: e.target.options[
+			//         e.target.selectedIndex
+			//       ].getAttribute("url"),
+			//     };
+			//   });
+			//   break;
 			// case 'light':
 			// 	setText((prevState) => {
 			// 		return {
@@ -61,6 +80,7 @@ function ControlText(props) {
 				break;
 		}
 	};
+
 	const changeText = (e) => {
 		console.log(e.target.name);
 		setText((prevState) => {
@@ -69,15 +89,24 @@ function ControlText(props) {
 				[e.target.name]: e.target.value,
 			};
 		});
-
-		// console.log("🚀 ~ file: index.js ~ line 282 ~ changeText ~ e.target.value", e.target.value)
 	};
-
+	const drawText = async () => {
+		let f = new FontFace('fontne', `url(${text.fontName})`);
+		await f.load();
+		document.fonts.add(f);
+		ctx.fillStyle = `${text.txt_color}`;
+		ctx.textBaseline = 'top';
+		ctx.font = `${text.weight} ${text.size}px 'fontne'`;
+		// ctx.font = "italic 100px 'ABeeZee'";
+		ctx.fillText(text.content, text.x, text.y);
+		console.log(text.content, text.x, text.y, text.fontName);
+	};
 	const showOnImage = (e) => {
 		e.preventDefault();
 		console.log(text);
 		drawText();
 	};
+	// console.log(text.fonts.items);
 
 	return (
 		<div>
@@ -126,21 +155,18 @@ function ControlText(props) {
 									<i className="fas fa-italic" />
 								</button>
 							</div>
-							{/* <div className="text-status">
-								<button type="submit" className="btn-status" id="light" onClick={changeStyle}>
-									<i className="fas fa-underline" />
-								</button>
-							</div> */}
 						</div>
 					</div>
-					<div className="col">
-						<select className="form-control" id="fontName" name="fontName" onSelect={changeFont}>
-							{fonts.map((font, index) => (
-								<option key={font.family} value={font[index].family}>
-									{font[index].family}
-								</option>
-							))}
-						</select>
+					<div>
+						<div className="col">
+							<select className="form-control" id="fontName" name="fontName" onChange={changeFont}>
+								{fonts.map((item, index) => (
+									<option key={index} url={item.files.regular}>
+										{item.family}
+									</option>
+								))}
+							</select>
+						</div>
 					</div>
 					<div className="col">
 						<input

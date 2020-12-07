@@ -12,17 +12,8 @@ function UseCanvasImage(props) {
 	const { imgsrc } = props;
 	const canvasRef = useRef(null);
 
-	const [text, setText] = useState({
-		content: '',
-		x: 0,
-		y: 0,
-		txt_color: '#000000',
-		weight: '',
-		size: '',
-		fonts: [],
-	});
+	const [text, setText] = useState();
 	const [ctx, setCtx] = useState();
-
 	const [crop, setCrop] = useState({
 		sX: 0,
 		sY: 0,
@@ -43,32 +34,10 @@ function UseCanvasImage(props) {
 	image.crossOrigin = 'Anonymous';
 	image.src = imgsrc;
 
-	async function drawText() {
-		const canvas = canvasRef.current;
-		const ctx = await canvas.getContext('2d');
-
-		ctx.fillStyle = text.txt_color;
-		ctx.textBaseline = 'top';
-		console.log(text.weight);
-		console.log(text.size);
-		console.log(typeof text.weight);
-		console.log(typeof text.size);
-		console.log(typeof text.font);
-		ctx.font = `${text.weight} ${text.size} ${text.fonts}`;
-		console.log(ctx.font);
-		// ctx.font = "italic 100px 'ABeeZee'";
-		ctx.fillText(text.content, text.x, text.y);
-		console.log(text.content, text.x, text.y);
-	}
-
 	function setContext(newCtx) {
 		setCtx(newCtx);
 		console.log('setCtx');
 	}
-
-	// function setData(dataURL) {
-	//   setDataURL(dataURL);
-	// }
 
 	async function drawImage(e) {
 		if (e === 'initial') {
@@ -86,7 +55,7 @@ function UseCanvasImage(props) {
 					if (e.target.id === 'reset') {
 						ctx.restore();
 						ctx.setTransform(1, 0, 0, 1, 0, 0);
-						// ctx.clearRect(0,0,canvas.width, canvas.height)
+						ctx.clearRect(0, 0, canvas.width, canvas.height);
 						ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvas.width, canvas.height);
 					}
 
@@ -165,7 +134,7 @@ function UseCanvasImage(props) {
 			<hr />
 			<CropImage canvas={canvas} image={image} setCrop={setCrop} drawImage={drawImage} />
 			<hr />
-			<ControlText text={text} setText={setText} fonts={text.fonts} drawText={drawText} />
+			<ControlText text={text} setText={setText} ctx={ctx} />
 		</div>
 	);
 }
