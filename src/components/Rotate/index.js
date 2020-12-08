@@ -4,7 +4,7 @@ function Rotate(props) {
   const { image, canvas, setContext, ctx } = props;
   // const image = new Image();
   // image.crossOrigin = "Anonymous";
-
+  console.log("render rotate");
   let isFirstRun = true;
   let currentAngle = 0;
   async function setImageSrc() {
@@ -14,9 +14,10 @@ function Rotate(props) {
     e.preventDefault();
     if (isFirstRun) {
       isFirstRun = false;
-      await setImageSrc()
+      await setImageSrc();
       currentAngle = parseInt(e.target.inputRotate.value);
     }
+
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     const cx = canvas.width / 2;
@@ -41,7 +42,8 @@ function Rotate(props) {
       canvas.width,
       canvas.height
     );
-    await setContext(ctx)
+    ctx.save();
+    await setContext(ctx);
     currentAngle = currentAngle + parseInt(e.target.inputRotate.value);
   };
 
@@ -57,9 +59,9 @@ function Rotate(props) {
           required
         />
         <div className="button_container">
-        <button id="rotate-btn" type="submit" className="btn btn-light">
-          Rotate
-        </button>
+          <button id="rotate-btn" type="submit" className="btn btn-light">
+            Rotate
+          </button>
         </div>
       </form>
     </div>
