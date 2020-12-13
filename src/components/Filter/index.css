@@ -1,0 +1,7 @@
+#button-filter {
+	background: url('https://cdn.jsdelivr.net/npm/photoeditorsdk@latest/assets/filter/categories/b&w.jpg');
+	padding: 1.5em;
+	width: 10em;
+	border-radius: 5px;
+	color: white;
+}
