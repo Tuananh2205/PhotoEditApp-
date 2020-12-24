@@ -12,18 +12,16 @@ function UploadFile(props) {
     let files;
     if (e.dataTransfer) {
       files = e.dataTransfer.files;
-      console.log(e.dataTransfer);
     } else if (e.target) {
       files = e.target.files;
-      console.log(files);
     }
     const reader = new FileReader();
     reader.onload = () => {
       setFile(reader.result);
     };
     reader.readAsDataURL(files[0]);
+    console.log("selectedFile", e.dataTransfer);
   };
-
   return (
     <div className="preview-container">
       <form className="file-select-frm">
@@ -31,16 +29,21 @@ function UploadFile(props) {
           <input
             className="custom-file-input"
             type="file"
-            accept="/image/*"
+            accept="image/*"
             onChange={onSelectedFile}
             id="initial"
             hidden
           />
-         <label htmlFor="initial">
-        <Button className="btn-center" variant="contained" color="default" component="span">
-          Upload
-        </Button>
-      </label>
+          <label htmlFor="initial">
+            <Button
+              className="btn-center"
+              variant="contained"
+              color="default"
+              component="span"
+            >
+              Upload
+            </Button>
+          </label>
         </div>
       </form>
     </div>

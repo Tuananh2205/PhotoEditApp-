@@ -1,15 +1,18 @@
 import React from "react";
-
-function GreyScale(props) {
-  const { setContext, ctx, canvas } = props;
-  // console.log(canvas);
+import { Slider } from "antd";
+function Brightness(props) {
+  const { ctx, setContext, canvas } = props;
   let array = [];
+  let isFirstRun = true;
   const getImgData = async () => {
     let newData = await ctx.getImageData(0, 0, canvas.width, canvas.height);
     array = newData.data;
   };
-  const changeToGreyscale = async () => {
-    await getImgData();
+  const handleChange = async (e) => {
+    if (isFirstRun) {
+      await getImgData();
+      isFirstRun = false;
+    }
     const output = [];
     const channel = 4;
     let row = [];
@@ -27,10 +30,12 @@ function GreyScale(props) {
       counter++;
     }
     for (let item of output) {
-      const gray = 0.2126 * item[0] + 0.7152 * item[1] + 0.0722 * item[2];
-      item[0] = gray;
-      item[1] = gray;
-      item[2] = gray;
+      let rp1 = (255 - item[0]) / 100;
+      let gp1 = (255 - item[1]) / 100;
+      let bp1 = (255 - item[2]) / 100;
+      item[0] = item[0] + rp1 * e;
+      item[1] = item[1] + gp1 * e;
+      item[2] = item[2] + bp1 * e;
     }
 
     let newArr = [];
@@ -41,21 +46,26 @@ function GreyScale(props) {
     }
     return newArr;
   };
-  const doConvert = async () => {
-    let newArr = await changeToGreyscale();
+  const doConvert = async (e) => {
+    let newArr = await handleChange(e);
     let imgData = await ctx.getImageData(0, 0, canvas.width, canvas.height);
     imgData.data.set(newArr);
     await ctx.putImageData(imgData, 0, 0);
     setContext(ctx);
-    // ctx.drawImage(img, 0, 0);
   };
   return (
-    <div className="grey-scale-filter">
-      <button className="btn btn-light" id="greyScale" onClick={doConvert}>
-        Change Greyscale
-      </button>
+    <div>
+      <div>
+        <h2>Brightness</h2>
+        <Slider
+          onAfterChange={doConvert}
+          defaultValue={0}
+          min={-100}
+          max={100}
+        />
+      </div>
     </div>
   );
 }
 
-export default GreyScale;
+export default Brightness;

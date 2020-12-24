@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 // import FontOption from "./fontOption";
-
+import { Input, Button, Select } from "antd";
+import { FormOutlined, FontSizeOutlined } from "@ant-design/icons";
 import "./index.css";
 function ControlText(props) {
-  const { ctx } = props;
-  const [text, setText] = useState();
+  const { Option } = Select;
+  const { ctx, setContext } = props;
+  const [text, setText] = useState({ weight: "normal" });
   const [fonts, setFonts] = useState([]);
   const getData = () =>
     fetch(
@@ -19,13 +21,14 @@ function ControlText(props) {
     getData().then((response) => setFonts(response.items));
   }, []);
   const changeFont = (e) => {
-    const url = e.target.options[e.target.selectedIndex].getAttribute("url");
+    console.log("e", e);
+    const url = e;
     const regex = /http/gi;
     const sUrl = url.replace(regex, "https");
     setText((prevState) => {
       return {
         ...prevState,
-        [e.target.id]: sUrl,
+        fontName: sUrl,
       };
     });
   };
@@ -49,24 +52,6 @@ function ControlText(props) {
           };
         });
         break;
-      // case "fontName":
-      //   setText((prevState) => {
-      //     return {
-      //       ...prevState,
-      //       [e.target.id]: e.target.options[
-      //         e.target.selectedIndex
-      //       ].getAttribute("url"),
-      //     };
-      //   });
-      //   break;
-      // case 'light':
-      // 	setText((prevState) => {
-      // 		return {
-      // 			...prevState,
-      // 			weight: id,
-      // 		};
-      // 	});
-      // 	break;
       default:
         break;
     }
@@ -84,113 +69,94 @@ function ControlText(props) {
     let f = new FontFace("fontne", `url(${text.fontName})`);
     await f.load();
     document.fonts.add(f);
-    ctx.restore();
     ctx.fillStyle = `${text.txt_color}`;
     ctx.textBaseline = "top";
     ctx.font = `${text.weight} ${text.size}px 'fontne'`;
-    // ctx.font = "italic 100px 'ABeeZee'";
     ctx.fillText(text.content, text.x, text.y);
+    await setContext(ctx);
   };
   const showOnImage = (e) => {
     e.preventDefault();
     drawText();
   };
-
   return (
     <div>
       <form className="comment-filter" onSubmit={showOnImage}>
         <label>Text</label>
+        <Input
+          prefix={<FormOutlined />}
+          name="content"
+          type="text"
+          placeholder="Fill content"
+          onChange={changeText}
+          required
+        />
+        <Input
+          type="color"
+          className="height-100"
+          onChange={changeText}
+          id="txt_color"
+          name="txt_color"
+          required
+        />
         <div className="form-row">
           <div className="col">
-            <input
-              className="form-control"
-              name="content"
-              type="text"
-              placeholder="Fill content"
-              onChange={changeText}
-              required
-            />
-          </div>
-          <div className="col">
-            <input
-              type="color"
-              className="form-control"
-              onChange={changeText}
-              id="txt_color"
-              name="txt_color"
-              required
-            />
-          </div>
-          <div className="col">
-            <input
-              className="form-control"
+            <Input
+              prefix={<FontSizeOutlined />}
               name="size"
-              type="text"
-              placeholder="Text size"
+              type="number"
+              placeholder="Size"
+              defaultValue={20}
+              title="Text Size"
               onChange={changeText}
               required
             />
           </div>
           <div className="col">
             <div className="text-weight">
-              <div className="text-status">
-                <button
-                  type="submit"
-                  className="btn-status"
-                  id="bold"
-                  onClick={changeStyle}
-                >
-                  <i className="fas fa-bold" />
-                </button>
-              </div>
-              <div className="text-status">
-                <button
-                  type="submit"
-                  className="btn-status"
-                  id="italic"
-                  onClick={changeStyle}
-                >
-                  <i className="fas fa-italic" />
-                </button>
-              </div>
+              <Button type="submit" id="bold" onClick={changeStyle}>
+                <i className="fas fa-bold" />
+              </Button>
+              <Button
+                type="submit"
+                className="btn-status"
+                id="italic"
+                onClick={changeStyle}
+              >
+                <i className="fas fa-italic" />
+              </Button>
             </div>
           </div>
           <div>
             <div className="col">
-              <select
-                className="form-control"
-                id="fontName"
-                name="fontName"
-                onChange={changeFont}
-              >
+              <Select id="fontName" name="fontName" onChange={changeFont}>
                 {fonts.map((item, index) => (
-                  <option key={index} url={item.files.regular}>
+                  <Option
+                    key={index}
+                    url={item.files.regular}
+                    title={item.family}
+                    value={item.files.regular}
+                  >
                     {item.family}
-                  </option>
+                  </Option>
                 ))}
-              </select>
+              </Select>
             </div>
           </div>
-          <div className="col">
-            <input
-              className="form-control"
-              name="x"
-              type="number"
-              placeholder="Text Position (X)"
-              onChange={changeText}
-              required
-            />
-          </div>
-          <div className="col">
-            <input
-              className="form-control"
-              name="y"
-              type="number"
-              placeholder="Text Position (Y)"
-              onChange={changeText}
-              required
-            />
-          </div>
+          <Input
+            name="x"
+            type="number"
+            placeholder="Text Position (X)"
+            onChange={changeText}
+            required
+          />
+          <Input
+            name="y"
+            type="number"
+            placeholder="Text Position (Y)"
+            onChange={changeText}
+            required
+          />
         </div>
         <div className="button_container">
           <button className="btn btn-light" type="submit">

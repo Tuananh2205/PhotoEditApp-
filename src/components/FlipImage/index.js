@@ -49,9 +49,7 @@ function FlipImage(props) {
       }
       counter++;
     }
-    // console.log(output.reverse());
     let newArr = [];
-    // console.log("output", output.reverse());
     for (let item of output.reverse()) {
       for (let element of item) {
         newArr.push(element);
